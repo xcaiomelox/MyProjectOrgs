@@ -4,7 +4,13 @@
 
     <item
         android:id="@+id/menu_detalhes_produto_editar"
-        android:icon="@drawable/ic_baseline_edit_24"
+        android:icon="@drawable/ic_editar"
         android:title="Editar"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_detalhes_produto_remover"
+        android:icon="@drawable/ic_deletar"
+        android:title="Apagar"
         app:showAsAction="ifRoom" />
 </menu>
