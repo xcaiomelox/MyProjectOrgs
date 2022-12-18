@@ -3,7 +3,6 @@ package br.com.alura.orgs.ui.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import br.com.alura.orgs.R
@@ -13,12 +12,10 @@ import br.com.alura.orgs.extensions.formataParaMoedaBrasileira
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
 
-private const val TAG = "DetalhesProduto"
-private var produto: Produto? = null
-
 class DetalhesProdutoActivity : AppCompatActivity() {
 
-    private var idProduto: Long? = null
+    private var produtoId: Long = 0
+    private var produto: Produto? = null
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
     }
@@ -36,9 +33,11 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        idProduto?.let { id ->
-            produto = produtoDao.buscaPorId(id)
-        }
+        buscaProduto()
+    }
+
+    private fun buscaProduto() {
+        produto = produtoDao.buscaPorId(produtoId)
         produto?.let {
             preencheCampos(it)
         } ?: finish()
@@ -57,7 +56,7 @@ class DetalhesProdutoActivity : AppCompatActivity() {
             }
             R.id.menu_detalhes_produto_editar -> {
                 Intent(this, FormularioProdutoActivity::class.java).apply {
-                    putExtra(CHAVE_PRODUTO, produto)
+                    putExtra(CHAVE_PRODUTO_ID, produtoId)
                     startActivity(this)
                 }
             }
@@ -68,10 +67,7 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 }
 
 private fun tentaCarregarProduto() {
-    intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)?.let { produtoCarregado ->
-        idProduto = produtoCarregado.id
-        preencheCampos(produtoCarregado)
-    } ?: finish()
+    produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
 }
 
 private fun preencheCampos(produtoCarregado: Produto) {
