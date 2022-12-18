@@ -12,7 +12,7 @@ import br.com.alura.orgs.model.Produto
 @Database(entities = [Produto::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
-    abstract fun ProdutoDao(): ProdutoDao
+    abstract fun produtoDao(): ProdutoDao
 
     companion object {
         fun instancia(context: Context) : AppDataBase{

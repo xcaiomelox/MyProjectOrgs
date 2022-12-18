@@ -26,7 +26,7 @@ class ListaProdutosActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val db = AppDataBase.instancia(this)
-        val produtoDao = db.ProdutoDao()
+        val produtoDao = db.produtoDao()
         adapter.atualiza(produtoDao.buscaTodos())
     }
 
