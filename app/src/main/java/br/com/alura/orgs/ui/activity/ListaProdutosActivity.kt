@@ -9,10 +9,8 @@ import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 
 class ListaProdutosActivity : AppCompatActivity() {
@@ -31,17 +29,11 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraRecyclerView()
         configuraFab()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        val scope = MainScope()
         lifecycleScope.launch {
-            val produtos = dao.buscaTodos()
-            adapter.atualiza(produtos)
+            dao.buscaTodos().collect { produtos ->
+                adapter.atualiza(produtos)
+            }
         }
-
     }
 
     private fun configuraFab() {

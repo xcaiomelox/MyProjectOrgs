@@ -2,6 +2,7 @@ package br.com.alura.orgs.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDataBase
 import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
@@ -10,6 +11,7 @@ import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.BigDecimal
@@ -49,13 +51,12 @@ class FormularioProdutoActivity : AppCompatActivity() {
     }
 
     private fun tentaBuscarProduto() {
-        scope.launch {
-            produtoDao.buscaPorId(produtoId)?.let {
-                withContext(Dispatchers.Main){
-                    title = "Editar produto"
+        lifecycleScope.launch {
+            produtoDao.buscaPorId(produtoId).collect(){ produto ->
+                produto?.let {
+                    title = "Alterar Produto"
                     preencheCampos(it)
                 }
-
             }
         }
 

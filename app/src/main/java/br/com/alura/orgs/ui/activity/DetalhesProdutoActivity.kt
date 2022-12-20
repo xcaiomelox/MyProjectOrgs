@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDataBase
 import br.com.alura.orgs.databinding.ActivityDetalhesProdutoBinding
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.collect
 
 class DetalhesProdutoActivity : AppCompatActivity() {
 
@@ -44,12 +46,12 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     }
 
     private fun buscaProduto() {
-        scope.launch {
-            produto = produtoDao.buscaPorId(produtoId)
-            withContext(Dispatchers.Main){
-                produto?.let {
+        lifecycleScope.launch {
+            produtoDao.buscaPorId(produtoId).collect{ produtoEncontrado ->
+                produto = produtoEncontrado
+                produto?.let{
                     preencheCampos(it)
-                } ?: finish()
+                } ?:finish()
             }
         }
 
@@ -63,9 +65,11 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_detalhes_produto_remover -> {
-                scope.launch {
-                    produto?.let { produtoDao.remove(it) }
-                    finish()
+                lifecycleScope.launch {
+                    produto?.let{
+                        produtoDao.remove(it)
+                        finish()
+                    }
                 }
             }
             R.id.menu_detalhes_produto_editar -> {
